@@ -22,9 +22,13 @@ func main() {
 
 	db := config.InitDb()
 
+	authService := services.NewAuthService(db)
+	authHandler := handler.NewAuthHandler(authService)
 	userLoginService := services.NewUserLoginService(db)
 	userService := services.NewUserService(db,userLoginService)
-	userHandler := handler.NewUserHandler(userService)
+	userHandler := handler.NewUserHandler(userService,authService)
+	
+
 	userGroup := app.Group("/api/user")
 
 	userGroup.Use(middlewares.ValidateJwtMiddleware)
@@ -35,8 +39,6 @@ func main() {
 	userGroup.Post("/:id",userHandler.UpdateUser)
 	userGroup.Delete("/:id",userHandler.DeleteUserById)
 
-	authService := services.NewAuthService(db)
-	authHandler := handler.NewAuthHandler(authService)
 	app.Post("/api/auth/login", authHandler.Login)
 
 

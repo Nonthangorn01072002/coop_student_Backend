@@ -14,6 +14,7 @@ type UserLogin struct {
 
 type AuthService interface{
 	Login(loginDto dto.LoginDto) (string, error)
+	ExtractUserIDFromJWT(tokenStr string) (int, error)
 }
 
 type UserLoginService interface{

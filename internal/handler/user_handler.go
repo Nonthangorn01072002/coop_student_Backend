@@ -3,17 +3,20 @@ package handler
 import (
 	"coop_student_backend/internal/domain"
 	"coop_student_backend/internal/dto"
-	"strconv"
 
 	"github.com/gofiber/fiber/v2"
 )
 
 type UserHandler struct {
-	service domain.UserService
+	service     domain.UserService
+	authService domain.AuthService
 }
 
-func NewUserHandler(s domain.UserService) *UserHandler {
-	return &UserHandler{service: s}
+func NewUserHandler(s domain.UserService, as domain.AuthService) *UserHandler {
+	return &UserHandler{
+		service:     s,
+		authService: as,
+	}
 }
 
 func (h *UserHandler) GetUserById(c *fiber.Ctx) error{
@@ -31,21 +34,24 @@ func (h *UserHandler) GetUserById(c *fiber.Ctx) error{
 }
 
 func (h *UserHandler) GetAllUser(c *fiber.Ctx) error {
-	uidStr := c.Cookies("coopToken")
-	if uidStr == "" {
+	token := c.Cookies("coopToken")
+	println("raw cookie : ",token)
+	if token == "" {
 		return c.Status(401).JSON(fiber.Map{
 			"message": "Unauthorized, no Token found",
 		})
 	}
 
-	uid, err := strconv.Atoi(uidStr)
+	
+	userId, err := h.authService.ExtractUserIDFromJWT(token)
+	println("cracked cookie to get uid : ",userId)
 	if err != nil {
-		return c.Status(400).JSON(fiber.Map{
-			"message": "Invalid coopToken format",
+		return c.Status(401).JSON(fiber.Map{
+			"message": "Invalid token",
 		})
 	}
 
-	users, err := h.service.FindAll(uid)
+	users, err := h.service.FindAll(userId)
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{
 			"message": "Failed to get user.",
