@@ -41,7 +41,6 @@ func (h *UserHandler) GetAllUser(c *fiber.Ctx) error {
 			"message": "Unauthorized, no Token found",
 		})
 	}
-
 	
 	userId, err := h.authService.ExtractUserIDFromJWT(token)
 	println("cracked cookie to get uid : ",userId)

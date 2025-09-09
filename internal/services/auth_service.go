@@ -18,7 +18,7 @@ type AuthService struct {
 
 
 func (a *AuthService) ExtractUserIDFromJWT(tokenStr string) (int, error) {
-		jwtSecretKey := os.Getenv("JWT_SECRET_KEY")
+	jwtSecretKey := os.Getenv("JWT_SECRET_KEY")
 	token, err := jwt.Parse(tokenStr, func(t *jwt.Token) (interface{}, error) {
 		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, errors.New("unexpected signing method")

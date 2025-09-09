@@ -10,8 +10,11 @@ import (
 	"coop_student_backend/internal/services"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/joho/godotenv"
 )
+
+
 
 func main() {
 	if err := godotenv.Load(); err != nil {
@@ -21,6 +24,13 @@ func main() {
 	app := fiber.New()
 
 	db := config.InitDb()
+
+	app.Use(cors.New())
+
+	app.Use(cors.New(cors.Config{
+    	AllowOrigins: "http://192.168.1.167:3000, http://localhost:3000",
+    	AllowHeaders: "Origin, Content-Type, Accept",
+	}))
 
 	authService := services.NewAuthService(db)
 	authHandler := handler.NewAuthHandler(authService)
@@ -40,7 +50,6 @@ func main() {
 	userGroup.Delete("/:id",userHandler.DeleteUserById)
 
 	app.Post("/api/auth/login", authHandler.Login)
-
 
 	app.Get("/api/health-check", func (c *fiber.Ctx) error {
         return c.Status(200).SendString("Health check is ok!")

@@ -57,11 +57,11 @@ func (u *UserService) Create(createUserDto dto.CreateUserDto) (*domain.User, err
 		Code:             createUserDto.Code,
 		Firstname:        createUserDto.Firstname,
 		Lastname:         createUserDto.Lastname,
-		Nickname:         createUserDto.Nickname,
-		Age:              createUserDto.Age,
+		Nickname:         createUserDto.Nickname, //edit later
+		Age:              createUserDto.Age, //insert by Birthdate
 		Birthdate:        createUserDto.Birthdate,
-		Phone:            createUserDto.Phone,
-		Role:             createUserDto.Role,
+		Phone:            createUserDto.Phone, //edit later
+		Role:             createUserDto.Role, //student default
 		AliveStatus:      true,
 		EducationStatus:  true,
 		GovermmentStatus: false,
@@ -102,3 +102,15 @@ func (u *UserService) Delete(id string) (*domain.User,error){
 	}
 	return &user,nil
 }
+
+// func (u *UserService) ValidateUserRole(uid uint,role string) (bool,error){
+// 	var chkAccessUser domain.User
+// 	var uppercaseRole string = strings.ToUpper(role);
+// 	if err := u.db.First(&chkAccessUser, "id = ?", uid).Error; err != nil {
+// 		return false, err
+// 	}
+// 	if chkAccessUser.Role != uppercaseRole {
+// 		return false, nil
+// 	}
+// 	return true,nil
+// }
